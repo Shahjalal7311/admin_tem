@@ -6,7 +6,7 @@
         <div class="col-md-3 col-md-offset-5">
             <div class="login-box">
                 <div class="login-logo">
-                  <a href="<?php echo url('/') ?>"><b>CIY</b> ADMIN</a>
+                  <a href="<?php echo url('/') ?>">ADMIN</a>
                 </div>
             </div>
             <div class="login-box-body">
