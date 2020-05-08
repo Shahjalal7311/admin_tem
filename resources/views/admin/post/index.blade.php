@@ -53,11 +53,13 @@
                             <td>{{ $item->id }}</td>
                             <td>{{ $item->title }}</td>
                             <td>
-                              <?php if((!empty($image_name))){ ?>
-                              <img src="{{asset('uploads/posts').'/'.$item->id.'/'.$image_name}}" width="50" height="50" alt="Post Image"/>
-                            <?php } else { ?>
-                              <img src="{{asset('img/post_dafult.jpg')}}" width="50" height="50" alt="Post Image"/>
-                            <?php } ?>
+                              <?php 
+                                    if($item->getFirstMediaUrl('post')){
+                                ?>
+                                <img src="<?= url('/').$item->getFirstMediaUrl('post') ?>" height="50" width="50">
+                                <?php } else{ ?>
+                                    <img src="{{asset('img/post_dafult.jpg')}}" width="50" height="50" alt="{{$item->title}}"/>
+                                <?php } ?>
                             </td>
                             <td>{{ $item->user['name'] }}</td>
                             <td>{{ $item->created_at->toFormattedDateString() }}</td>

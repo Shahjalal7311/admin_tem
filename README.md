@@ -1,64 +1,128 @@
-# Roles Permissions Laravel (RPL)
-A stater kit with Roles and Permissions implementation on Laravel 5.4
+<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
 
-### Install
-1. To use it just clone the repo and composer install.
-2. Set the database connection 
-3. Migration 
-	php artisan migrate
-	php artisan migrate:rollback
-4. To test the app run `php artisan db:seed`, our [interactive seeder](http://www.qcode.in/advance-interactive-database-seeding-in-laravel/) will take care of everything.
+<p align="center">
+<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+</p>
 
-### Add a new Resource
+## About Laravel
+
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
+
+## Learning Laravel
+
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+
+## Laravel Sponsors
+
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+
+- **[Vehikl](https://vehikl.com/)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Cubet Techno Labs](https://cubettech.com)**
+- **[Cyber-Duck](https://cyber-duck.co.uk)**
+- **[British Software Development](https://www.britishsoftware.co)**
+- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
+- **[DevSquad](https://devsquad.com)**
+- [UserInsights](https://userinsights.com)
+- [Fragrantica](https://www.fragrantica.com)
+- [SOFTonSOFA](https://softonsofa.com/)
+- [User10](https://user10.com)
+- [Soumettre.fr](https://soumettre.fr/)
+- [CodeBrisk](https://codebrisk.com)
+- [1Forge](https://1forge.com)
+- [TECPRESSO](https://tecpresso.co.jp/)
+- [Runtime Converter](http://runtimeconverter.com/)
+- [WebL'Agence](https://weblagence.com/)
+- [Invoice Ninja](https://www.invoiceninja.com)
+- [iMi digital](https://www.imi-digital.de/)
+- [Earthlink](https://www.earthlink.ro/)
+- [Steadfast Collective](https://steadfastcollective.com/)
+- [We Are The Robots Inc.](https://watr.mx/)
+- [Understand.io](https://www.understand.io/)
+- [Abdel Elrafa](https://abdelelrafa.com)
+- [Hyper Host](https://hyper.host)
+
+## Contributing
+
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+
+## Security Vulnerabilities
+
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+
+## License
+
+The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Deploy Procedure
+
+
+## Migration 
+
+ - php artisan migrate
+ - php artisan migrate:rollback
+
+## auth:permission Sample Controller `Role`
+
 1. Create desired resource by running 
- ```bash
-## Create Comment model with migration and resource controller
-php artisan make:model Comment -m -c --resource
-```
-2. Register route for it.
-```php
-Route::group( ['middleware' => ['auth']], function() {
-    ...
-    Route::resource('comments', 'CommentController');
-});
-```
+  - php artisan make:model Controller Name -m -c --resource
 
-3. Now implement your controllers methods and use the `Authorizable` trait
-```php
-use App\Authorizable;
-
-class CommentController extends Controller
-{
+2. Now implement your controllers methods and use the `Authorizable` trait
+ - use App\Authorizable;
+```class RoleController extends Controller
+  {
     use Authorizable;
     ...
 ```
 
-4. Now add the permissions for this new `Comment` model.
-```bash
-php artisan auth:permission Comment
-```
+3. Set Route in route file for Role. Route look like 
+ - Route::resource('roles', 'RoleController');
+
+4. Set Dafult Auth Permission in App/Permission
+  - 'view_roles', 'add_roles','edit_roles','delete_roles', 
+
+5. Now add the permissions for this new `Role` model.
+ - php artisan auth:permission Role
+
+6. Remove permissions
+ - php artisan auth:permission Role --remove
 
 That's it, you have added new resource controller which have full access control by laravel permissions.
- 
- ### auth:permission command
- This command can be user to add or remove permission for a given model
- 
- ```bash
-## add permission
-php artisan auth:permission User
-php artisan auth:permission Role
-php artisan auth:permission Post
-php artisan auth:permission Artical
 
-## remove permissions
-php artisan auth:permission User --remove
-php artisan auth:permission Role --remove
-php artisan auth:permission Post --remove
-php artisan auth:permission Artical --remove
-```
+##Database Seeds
+
+- php artisan db:seed --class=UsersPermissionTableSeeder
+
+## Storage Link generate
+ - php artisan storage:link
+
+## Artisan Key genearte in new env file
+ - php artisan key:generate 
+
+## Composer dump and autoload 
+ - composer dump-autoload
+
 ##If Migration problem rise.run this command
-##php artisan cache:clear
-##php artisan view:clear
-##php artisan route:clear
-##php artisan clear-compiled
-##php artisan config:cache
+ - php artisan cache:clear
+ - php artisan view:clear
+ - php artisan route:clear
+ - php artisan clear-compiled
+ - php artisan config:cache

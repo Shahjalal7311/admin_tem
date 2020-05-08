@@ -46,37 +46,37 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $todate = date("Y-m-d-H-i-s");
         $this->validate($request, [
             'title' => 'required|min:10',
-            'body' => 'required|min:20',
-            'image_name' => 'required',
+            'body' => 'required'
         ]);
 
-        $check_has = $request->hasFile('image_name');
-        $file_name = $request->file('image_name');
-        $name = time().'.'.$file_name->getClientOriginalExtension();
-        $path_url = public_path('/uploads/posts');
+        // $check_has = $request->hasFile('image_name');
+        // $file_name = $request->file('image_name');
+        // $name = time().'.'.$file_name->getClientOriginalExtension();
+        // $path_url = public_path('/uploads/posts');
+                // if($data){
+        //     $path = $path_url.'/'.$data->id;
+        //     //main image create thum 100px size
+        //     $destinationPath = $path_url.'/'.$data->id.'/100/';
+        //     File::makeDirectory($destinationPath, $mode = 0777, true, true);
+        //     $img = Image::make($file_name->getRealPath());
+        //     $watermark =  public_path('img/logo.png');
+        //     //set watermark
+        //     $this->watermarkset($img,$watermark,$destinationPath, $name, $position='center');
+        //     //file uploads
+        //     File::makeDirectory($path, $mode = 0777, true, true);
+        //     FileUploadComponent::upload($check_has,$file_name, $path, $name);
+        // }
         //thum 
-        $post_data = [
-            'title'=>$request->title,
-            'body'=>$request->body,
-            'image_name'=>$name,
-        ];
-        $data = $request->user()->posts()->create($post_data);
-        if($data){
-            $path = $path_url.'/'.$data->id;
-            //main image create thum 100px size
-            $destinationPath = $path_url.'/'.$data->id.'/100/';
-            File::makeDirectory($destinationPath, $mode = 0777, true, true);
-            $img = Image::make($file_name->getRealPath());
-            $watermark =  public_path('img/logo.png');
-            //set watermark
-            $this->watermarkset($img,$watermark,$destinationPath, $name, $position='center');
-            //file uploads
-            File::makeDirectory($path, $mode = 0777, true, true);
-            FileUploadComponent::upload($check_has,$file_name, $path, $name);
+        $post = new Post;  
+        $post->title = $request->title; 
+        $post->body = $request->body;
+        $post->user_id = Auth::user()->id;
+        if($request->image_name){
+          $this->_fileUpload($request, $post);
         }
+        $post->save();
         flash('Post has been added');
         return redirect()->back();
     }
@@ -131,7 +131,6 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-        $todate = date("Y-m-d-H-i-s");
         $this->validate($request, [
             'title' => 'required|min:10',
             'body' => 'required|min:20',
@@ -142,28 +141,30 @@ class PostController extends Controller
         } else {
             $post = $me->posts()->findOrFail($post->id);
         }
-        $check_has = $request->hasFile('image_name');
-        if($check_has){
-            $file_name = $request->file('image_name');
-            $name = $todate.'.'.$file_name->getClientOriginalExtension();
-            $path_url = public_path('/uploads/posts');
-            $path = $path_url.'/'.$post->id;
-            $destinationPath = $path_url.'/'.$post->id.'/100/';
-            File::makeDirectory($destinationPath, $mode = 0777, true, true);
-            $img = Image::make($file_name->getRealPath());
-            $watermark =  public_path('img/logo.png');
-            //set watermark
-            $this->watermarkset($img,$watermark,$destinationPath, $name, $position='center');
-            //file uploads
-            $imagename = FileUploadComponent::upload($check_has,$file_name, $path, $name);
-        }else{
-            $imagename = $post->image_name;
-        }
+        // $check_has = $request->hasFile('image_name');
+        // if($check_has){
+        //     $file_name = $request->file('image_name');
+        //     $name = $todate.'.'.$file_name->getClientOriginalExtension();
+        //     $path_url = public_path('/uploads/posts');
+        //     $path = $path_url.'/'.$post->id;
+        //     $destinationPath = $path_url.'/'.$post->id.'/100/';
+        //     File::makeDirectory($destinationPath, $mode = 0777, true, true);
+        //     $img = Image::make($file_name->getRealPath());
+        //     $watermark =  public_path('img/logo.png');
+        //     //set watermark
+        //     $this->watermarkset($img,$watermark,$destinationPath, $name, $position='center');
+        //     //file uploads
+        //     $imagename = FileUploadComponent::upload($check_has,$file_name, $path, $name);
+        // }else{
+        //     $imagename = $post->image_name;
+        // }
         $post_data = [
             'title'=>$request->title,
             'body'=>$request->body,
-            'image_name'=>$imagename,
         ];
+        if($request->image_name){
+          $this->_fileUpload($request, $artical);
+        }
         $query = Post::where('id', $post->id)->update($post_data);
         flash()->success('Post has been updated.');
         return redirect()->route('posts.index');
@@ -258,5 +259,17 @@ class PostController extends Controller
         $file_name = 'post_'.$request->id.'.pdf';
         $pdf = PDF::loadView('admin.post.pdf_view', ['data' =>$post]);  
         return $pdf->download($file_name);
+    }
+
+    /**
+     * File the Upload resource from storage.
+     *
+     * @param  \App\LocationPoint  $locationPoint
+     * @return \Illuminate\Http\Response
+    */
+    public function _fileUpload($request, $artical){
+      foreach ($request->image_name as $file) {
+        $artical->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('post');
+      }
     }
 }

@@ -76,6 +76,6 @@ class RoleController extends Controller
         } else {
             flash()->error( 'Role with id '. $id .' note found.');
         }
-        return redirect()->route('roles.index');
+        return redirect()->route('roles.index', ['closed'=>true]);
     }
 }

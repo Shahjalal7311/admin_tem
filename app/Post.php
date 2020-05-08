@@ -3,9 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\File;
+use Cviebrock\EloquentSluggable\Sluggable;
 
-class Post extends Model
+class Post extends Model implements HasMedia
 {
+    use HasMediaTrait;
     protected $fillable = ['title', 'body','image_name'];
 
     protected static function boot(){

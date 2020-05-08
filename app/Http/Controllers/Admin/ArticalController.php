@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Common\FileUploadComponent;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use \Cviebrock\EloquentSluggable\Services\SlugService;
 use App\Artical;
 use App\User;
 use Image;
@@ -51,25 +52,20 @@ class ArticalController extends Controller
   {
   	$this->validate($request,[
   		'title' => 'required|min:10',
+        'slug' => 'required',
   		'body' => 'required'
   	]);
-  	$has_file = $request->hasFile('image_name');
-  	$imgname = '';
-  	if($has_file){
-  		$cover = $request->file('image_name');
-	  	$re_name = time();
-	    $extension = $cover->getClientOriginalExtension();
-	    Storage::disk('public')->put('/articals/'.$re_name.'.'.$extension,  File::get($cover));
-	    $imgname =  time().'.'.$cover->getClientOriginalExtension();
-  	}
   	$artical = new Artical;
   	$artical->title = $request->title;
-  	$artical->image_name = $imgname;
+    $artical->slug = $request->slug;
   	$artical->user_id = auth()->user()->id;
   	$artical->body = $request->body;
+    if($request->image_name){
+      $this->_fileUpload($request, $artical);
+    }
   	$artical->save();
   	flash('Artical added successfully...');
-    return redirect()->back();
+    return redirect('admin/articals');
   }
 
   /**
@@ -93,9 +89,9 @@ class ArticalController extends Controller
      */
     public function update(Request $request, Artical $artical)
     {
-        $todate = date("Y-m-d-H-i-s");
         $this->validate($request, [
             'title' => 'required|min:10',
+            'slug' => 'required',
             'body' => 'required|min:20',
         ]);
         $me = $request->user();
@@ -104,33 +100,14 @@ class ArticalController extends Controller
         } else {
             $artical = $me->articals()->findOrFail($artical->id);
         }
-        // $check_has = $request->hasFile('image_name');
-        // $file_name = $request->file('image_name');
-        // $name = $todate.'.'.$file_name->getClientOriginalExtension();
-        // $path_url = public_path('/uploads/articals');
-        // $path = $path_url.'/'.$artical->id;
-        // $imagename = FileUploadComponent::upload($check_has,$file_name, $path, $name);
-        // $save_data = [
-        //     'title'=>$artical->title,
-        //     'body'=>$artical->body,
-        //     'image_name'=>$imagename,
-        // ];
-        $has_file = $request->hasFile('image_name');
-        $imgname = '';
-        if($has_file){
-          $cover = $request->file('image_name');
-          $re_name = time();
-          $extension = $cover->getClientOriginalExtension();
-          Storage::disk('public')->put('/articals/'.$re_name.'.'.$extension,  File::get($cover));
-          $imgname =  time().'.'.$cover->getClientOriginalExtension();
-        }else{
-          $imgname = $artical->image_name;
-        }
         $update_data = [
             'title'=>$request->title,
+            'slug'=>$request->slug,
             'body'=>$request->body,
-            'image_name'=>$imgname,
         ];
+        if($request->image_name){
+          $this->_fileUpload($request, $artical);
+        }
         $query = Artical::where('id', $artical->id)->update($update_data);
         if($query){
             $request->session()->flash('success', 'Record successfully added!');
@@ -148,21 +125,33 @@ class ArticalController extends Controller
      */
     public function destroy(Artical $artical)
     {
-        $me = Auth::user();
-
-        if($me->hasRole('admin')){
-            $post = Artical::findorFail($artical->id);
-        }else{
-            $post = $me->artical()->findorFail($artical->id);
-        }
-
-        Artical::where('id',$post->id)
-                ->update([
-                    'is_delete'=>'0',
-                    'delete_by'=>$post->user_id,
-                ]);
+        $artical->delete();
         flash()->success('Post has been deleted.');
         return redirect()->route('articals.index');        
     }
+
+    /**
+     * Implement human readble url.
+     *
+     * @param  \App\Artical  $artical
+     * @return \Illuminate\Http\Response
+    */
+
+    public function slugCreate(Request $request){
+        $slug = SlugService::createSlug(Artical::class,'slug', $request['slug']);
+        return response()->json(['slug'=>$slug]);
+    }
+
+    /**
+     * File the Upload resource from storage.
+     *
+     * @param  \App\LocationPoint  $locationPoint
+     * @return \Illuminate\Http\Response
+    */
+    public function _fileUpload($request, $artical){
+      foreach ($request->image_name as $file) {
+        $artical->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('artical');
+      }
+    } 
 
 }

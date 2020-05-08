@@ -1,11 +1,16 @@
 <?php
 
 namespace App;
-
+use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\File;
 
-class Artical extends Model
+class Artical extends Model implements HasMedia
 {
+    use Sluggable, HasMediaTrait;
+
 	/**
      * The attributes that should be hidden for arrays.
      *
@@ -32,9 +37,21 @@ class Artical extends Model
     	return \DB::table('articals')->where('articals.user_rmd_id',$this->id)->sum('users.id');
     }
 
-    public $appends = ['user_count'];
-
     public function setTitleAttribute($value){
     	$this->attributes['title'] = ucwords($value);
+    }
+
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+    */
+    public function sluggable()
+    {
+        return [
+            'slug' => [
+                'source' => 'title'
+            ]
+        ];
     }
 }

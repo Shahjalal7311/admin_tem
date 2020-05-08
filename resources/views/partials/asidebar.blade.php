@@ -2,7 +2,7 @@
   <!-- sidebar menu: : style can be found in sidebar.less -->
   <ul class="sidebar-menu" data-widget="tree">
     <li>
-        <a href="{{ route('home') }}">
+        <a href="{{ route('dashboard') }}">
             <span class="text-info glyphicon glyphicon-user"></span> Dashboard
         </a>
     </li>
