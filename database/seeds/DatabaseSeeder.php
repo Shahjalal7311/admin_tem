@@ -72,8 +72,8 @@ class DatabaseSeeder extends Seeder
 
 
         // now lets seed some posts for demo
-        factory(\App\Post::class, 30)->create();
-        factory(\App\Artical::class, 30)->create();
+        factory(\App\Post::class, 4)->create();
+        factory(\App\Artical::class, 4)->create();
         $this->command->info('Some Posts data using seeded.');
         $this->command->warn('All done :)');
     }
@@ -88,10 +88,10 @@ class DatabaseSeeder extends Seeder
         $user = factory(User::class)->create();
         $user->assignRole($role->name);
 
-        if( $role->name == 'Admin' ) {
+        if( strtolower($role->name) == 'admin' ) {
             $this->command->info('Here is your admin details to login:');
             $this->command->warn($user->email);
-            $this->command->warn('Password is "123456"');
+            $this->command->warn('Password is "aaaaaaaa`"');
         }
     }
 }

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>{{ config('app.name', 'Admin Managment') }}</title>
+  <title>Admin</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -20,11 +20,11 @@
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <!-- jQuery 3 -->
-  <script src="{{ asset('admins/bower_components/jquery/dist/jquery.min.js')}}"></script>
+  <script src="{{ asset('public/admins/bower_components/jquery/dist/jquery.min.js')}}"></script>
   <!-- jQuery UI 1.11.4 -->
-  <script src="{{ asset('admins/bower_components/jquery-ui/jquery-ui.min.js')}}"></script>
+  <script src="{{ asset('public/admins/bower_components/jquery-ui/jquery-ui.min.js')}}"></script>
   <!-- Bootstrap 3.3.7 -->
-  <script src="{{ asset('admins/bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
+  <script src="{{ asset('public/admins/bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
   <script>
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),

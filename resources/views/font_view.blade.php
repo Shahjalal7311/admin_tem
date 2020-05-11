@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>Role and dynamic Permission</title>
-        <link rel="stylesheet" href="{{ asset('css/style.css')}}">
+        <link rel="stylesheet" href="{{ asset('public/css/style.css')}}">
         <!-- Styles -->
     </head>
     <body>
